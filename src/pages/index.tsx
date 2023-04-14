@@ -1,9 +1,29 @@
 import Head from 'next/head'
-import { Inter } from 'next/font/google'
+import Link from 'next/link'
+import Image from 'next/image'
+import { useKeenSlider } from 'keen-slider/react'
 
-const inter = Inter({ subsets: ['latin'] })
+import { styled } from '@/styles'
+
+import { HomeContainer } from '@/components/Home/HomeContainer'
+import { Product } from '@/components/Home/Product'
+
+
+import camiseta1 from '../../public/camisetas/1.png'
+import camiseta2 from '../../public/camisetas/2.png'
+import camiseta3 from '../../public/camisetas/3.png'
+
+import 'keen-slider/keen-slider.min.css'
 
 export default function Home() {
+
+  const [slideRef] = useKeenSlider({
+    slides: {
+      perView: 2.5,
+      spacing: 48,
+    }
+  })
+
   return (
     <>
       <Head>
@@ -13,8 +33,31 @@ export default function Home() {
         <link rel="icon" href="/favicon.png" />
       </Head>
       <main>
-        <h1>Hello Word</h1>
+
+        <HomeContainer ref={slideRef} className='keen-slider'>
+          <Product className='keen-slider__slide'>
+            <Image src={camiseta1} alt='' width={520} height={520}/>
+          </Product>
+
+          <Product className='keen-slider__slide'>
+            <Image src={camiseta2} alt='' width={520} height={520}/>
+          </Product>
+
+          <Product className='keen-slider__slide'>
+            <Image src={camiseta3} alt='' width={520} height={520}/>
+          </Product>
+
+
+          <Product className='keen-slider__slide'>
+            <Image src={camiseta3} alt='' width={520} height={520}/>
+          </Product>
+        </HomeContainer>
+     
       </main>
     </>
   )
 }
+
+const ButtonLink = styled(Link, {
+  background: '$green500'
+})
