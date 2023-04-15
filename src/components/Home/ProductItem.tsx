@@ -1,19 +1,25 @@
 import { styled } from "@/styles"
 import Link from "next/link"
-import { PropsWithRef, ReactNode } from "react"
+import Image from 'next/image'
 
 interface ProductProps {
-  children: ReactNode
   className?: string
+  product: {
+    id: string,
+    name: string,
+    imageUrl: string,
+    description: string,
+    price: string
+  }
 }
 
-export const Product = ({ children, className }: ProductProps) => {
+export const ProductItem = ({ className, product }: ProductProps) => {
   return (
-    <ProductWrapper href={'#'} className={className}>
-      {children}
+    <ProductWrapper href={`./product/${product.id}`} className={className} prefetch={false}>
+      <Image src={product.imageUrl} alt='' width={520} height={520}/>
       <footer>
-        <strong className="productName">Camiseta X</strong>
-        <span className="productPrice">R$ 79,90</span>
+        <strong className="productName">{product.name}</strong>
+        <span className="productPrice">{product.price}</span>
       </footer>
     </ProductWrapper>
   )

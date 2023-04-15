@@ -1,27 +1,62 @@
 import Head from 'next/head'
-import Link from 'next/link'
-import Image from 'next/image'
 import { useKeenSlider } from 'keen-slider/react'
 
-import { styled } from '@/styles'
-
 import { HomeContainer } from '@/components/Home/HomeContainer'
-import { Product } from '@/components/Home/Product'
-
-
-import camiseta1 from '../../public/camisetas/1.png'
-import camiseta2 from '../../public/camisetas/2.png'
-import camiseta3 from '../../public/camisetas/3.png'
+import { ProductItem } from '@/components/Home/ProductItem'
 
 import 'keen-slider/keen-slider.min.css'
+import { stripe } from '@/lib/stripe'
+import { GetStaticProps } from 'next'
+import Stripe from 'stripe'
 
-export default function Home() {
+
+export const getStaticProps: GetStaticProps = async () => {
+  const response = await stripe.products.list({
+    expand: ['data.default_price']
+  })
+
+  const products = response.data.map( product => {
+
+    const price = product.default_price as Stripe.Price
+
+    return {
+      id: product.id,
+      name: product.name,
+      imageUrl: product.images[0],
+      description: product.description,
+      price: new Intl.NumberFormat('pt-BR', {
+        style: 'currency',
+        currency: 'BRL'
+      }).format(price.unit_amount?  price.unit_amount / 100 : 0)
+    }
+  })
+
+  return {
+    props: {
+      products
+    },
+    revalidate: 60 * 60 * 2 // 2 hours
+  }
+}
+
+interface HomeProps {
+  products: {
+    id: string,
+    name: string,
+    imageUrl: string,
+    description: string,
+    price: string
+  }[]
+}
+
+export default function Home( {products}: HomeProps ) {
 
   const [slideRef] = useKeenSlider({
     slides: {
       perView: 2.5,
       spacing: 48,
-    }
+    },
+    drag: true
   })
 
   return (
@@ -32,32 +67,19 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.png" />
       </Head>
+      
       <main>
+        <HomeContainer ref={slideRef} className='keen-slider' data-keen-slider-scrollable>
 
-        <HomeContainer ref={slideRef} className='keen-slider'>
-          <Product className='keen-slider__slide'>
-            <Image src={camiseta1} alt='' width={520} height={520}/>
-          </Product>
+          {products.map( (product) => {
+            return (
+              <ProductItem key={product.id} className='keen-slider__slide' product={product} />
+            )
+          } )}
 
-          <Product className='keen-slider__slide'>
-            <Image src={camiseta2} alt='' width={520} height={520}/>
-          </Product>
-
-          <Product className='keen-slider__slide'>
-            <Image src={camiseta3} alt='' width={520} height={520}/>
-          </Product>
-
-
-          <Product className='keen-slider__slide'>
-            <Image src={camiseta3} alt='' width={520} height={520}/>
-          </Product>
         </HomeContainer>
-     
       </main>
     </>
   )
 }
 
-const ButtonLink = styled(Link, {
-  background: '$green500'
-})

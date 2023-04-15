@@ -1,12 +1,13 @@
 import { styled } from "@/styles"
 import Image from 'next/image'
 import logo from '../../public/Logo.png'
+import Link from "next/link"
 
 
 export const Header = () => {
   return (
     <HeaderWrapper>
-      <Image className="logo" width={130} height={52} src={logo} alt=""/>
+      <Link href={'../'}><Image className="logo" width={130} height={52} src={logo} alt=""/></Link>
     </HeaderWrapper>
   )
 }

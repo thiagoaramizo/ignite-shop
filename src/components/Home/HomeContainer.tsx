@@ -7,4 +7,5 @@ export const HomeContainer = styled('div', {
   marginLeft: 'calc((100vw - 1180px) / 2)',
   marginRight: 0,
   minHeight: 656,
+  overflow: 'scroll',
 })
